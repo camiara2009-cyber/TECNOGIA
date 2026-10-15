@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chatbot - Dependencia Tecnológica</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(135deg, #eef7f2, #dcefe7);
+      color: #26352f;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 25px;
+    }
+
+    .chat-container {
+      width: 100%;
+      max-width: 850px;
+      height: 650px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background: #5b8f7a;
+      color: white;
+      padding: 22px 25px;
+      text-align: center;
+    }
+
+    .header h1 {
+      margin: 0 0 7px;
+      font-size: 25px;
+    }
+
+    .header p {
+      margin: 0;
+      font-size: 14px;
+      opacity: 0.95;
+    }
+
+    .chat-box {
+      flex: 1;
+      padding: 22px;
+      overflow-y: auto;
+      background: #f7faf8;
+    }
+
+    .message {
+      max-width: 80%;
+      padding: 12px 16px;
+      margin-bottom: 13px;
+      border-radius: 15px;
+      white-space: pre-line;
+      line-height: 1.5;
+      font-size: 15px;
+      word-wrap: break-word;
+    }
+
+    .bot-message {
+      background: #e4f0eb;
+      color: #26352f;
+      border-bottom-left-radius: 4px;
+      margin-right: auto;
+    }
+
+    .user-message {
+      background: #5b8f7a;
+      color: white;
+      border-bottom-right-radius: 4px;
+      margin-left: auto;
+    }
+
+    .welcome {
+      background: #ffffff;
+      border: 1px solid #d7e5df;
+      padding: 15px;
+      border-radius: 14px;
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+
+    .input-area {
+      display: flex;
+      gap: 10px;
+      padding: 15px;
+      border-top: 1px solid #dfe8e4;
+      background: white;
+    }
+
+    #userInput {
+      flex: 1;
+      padding: 13px 15px;
+      border: 1px solid #b9ccc4;
+      border-radius: 12px;
+      outline: none;
+      font-size: 15px;
+    }
+
+    #userInput:focus {
+      border-color: #5b8f7a;
+      box-shadow: 0 0 0 2px rgba(91, 143, 122, 0.12);
+    }
+
+    #sendButton {
+      border: none;
+      background: #5b8f7a;
+      color: white;
+      padding: 0 22px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: bold;
+    }
+
+    #sendButton:hover {
+      background: #477863;
+    }
+
+    .suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 0 22px 15px;
+      background: #f7faf8;
+    }
+
+    .suggestion {
+      border: 1px solid #b9ccc4;
+      background: white;
+      color: #466c5b;
+      border-radius: 20px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .suggestion:hover {
+      background: #e4f0eb;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 0;
+      }
+
+      .chat-container {
+        height: 100vh;
+        border-radius: 0;
+      }
+
+      .message {
+        max-width: 90%;
+      }
+
+      #sendButton {
+        padding: 0 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="chat-container">
+
+    <div class="header">
+      <h1>Chatbot de Dependencia Tecnológica</h1>
+      <p>Proyecto de investigación - Rendimiento académico</p>
+    </div>
+
+    <div class="chat-box" id="chatBox">
+      <div class="welcome">
+        <strong>Hola, soy el asistente de investigación.</strong><br>
+        Puedes preguntarme sobre la dependencia tecnológica, objetivos, hipótesis,
+        metodología, resultados, variables, autores, dispositivos utilizados y bases legales.
+      </div>
+
+      <div class="message bot-message">
+        ¿Qué te gustaría saber sobre el proyecto?
+      </div>
+    </div>
+
+    <div class="suggestions">
+      <button class="suggestion" onclick="askQuestion('¿Cuál es la hipótesis?')">Hipótesis</button>
+      <button class="suggestion" onclick="askQuestion('¿Cuál es la metodología?')">Metodología</button>
+      <button class="suggestion" onclick="askQuestion('¿Cuáles son los resultados?')">Resultados</button>
+      <button class="suggestion" onclick="askQuestion('¿Cuáles son los objetivos?')">Objetivos</button>
+      <button class="suggestion" onclick="askQuestion('¿Quiénes son los autores?')">Autores</button>
+    </div>
+
+    <div class="input-area">
+      <input
+        type="text"
+        id="userInput"
+        placeholder="Escribe tu pregunta..."
+        autocomplete="off"
+      >
+      <button id="sendButton" onclick="sendMessage()">Enviar</button>
+    </div>
+
+  </div>
+
+  <script>
+    // ================================
+    // BASE DE CONOCIMIENTO
+    // ================================
+
+    const knowledgeBase = [
+      {
+        keywords: ['pregunta', 'preguntas', 'interrogante', 'problema', 'planteamiento'],
+        response:
+          "Pregunta General: ¿Cómo influye la dependencia tecnológica en el rendimiento académico de los estudiantes del Colegio Gral. Bernardino Caballero?\n\n" +
+          "Preguntas Específicas:\n" +
+          "1) ¿Cuál es el grado de dependencia tecnológica en los alumnos?\n" +
+          "2) ¿Cuáles son los factores que la generan?\n" +
+          "3) ¿Qué dispositivos usan con mayor frecuencia y cómo afectan sus notas?"
+      },
+
+      {
+        keywords: ['dependencia', 'deppendencia', 'adiccion', 'adicciones', 'digital', 'nomofobia'],
+        response:
+          "La dependencia tecnológica o adicción digital se refiere al uso excesivo o difícil de controlar de dispositivos y servicios tecnológicos, como celulares, videojuegos y redes sociales.\n\n" +
+          "La nomofobia es el miedo o ansiedad relacionada con no poder disponer del teléfono móvil."
+      },
+
+      {
+        keywords: ['afecta', 'impacto', 'jovenes', 'rendimiento', 'academico', 'estudiantes', 'notas', 'escuela'],
+        response:
+          "La dependencia tecnológica puede afectar el rendimiento académico mediante distracciones constantes, menor concentración, postergación de tareas, pérdida de tiempo de estudio y alteraciones del sueño."
+      },
+
+      {
+        keywords: ['sintoma', 'sintomas', 'senal', 'senales', 'efecto', 'efectos', 'consecuencia', 'consecuencias'],
+        response:
+          "Algunas señales o consecuencias relacionadas con un uso problemático de la tecnología son:\n" +
+          "1) Dificultad para controlar el tiempo de uso.\n" +
+          "2) Distracción frecuente.\n" +
+          "3) Problemas de concentración.\n" +
+          "4) Alteraciones del sueño.\n" +
+          "5) Irritabilidad o ansiedad al no poder utilizar determinados dispositivos."
+      },
+
+      {
+        keywords: ['autor', 'autores', 'quienes', 'integrante', 'integrantes', 'grupo', 'tutora', 'profesora'],
+        response:
+          "Los autores son:\n" +
+          "• Camila Arami Aquino Alonso\n" +
+          "• Luz Dahiana Gomez Gomez\n" +
+          "• Jorge Luis Martinez Torres\n" +
+          "• Mauricio Samuel Yahari Aguayo\n\n" +
+          "Tutora metodológica: Prof. Lic. Lissa Ozuna.\n" +
+          "Coordinadora: Prof. Ing. Edith Sotto."
+      },
+
+      {
+        keywords: ['colegio', 'institucion', 'curso', 'bachillerato', 'tema', 'promocion', 'promo'],
+        response:
+          "La investigación corresponde al Colegio Nacional E.M.D. General Bernardino Caballero de Itá, Paraguay.\n\n" +
+          "Curso: 3° año del Bachillerato Técnico en Informática (BTI).\n" +
+          "Año: 2026.\n" +
+          "Tema: Dependencia tecnológica y rendimiento académico."
+      },
+
+      {
+        keywords: ['objetivo', 'objetivos', 'meta'],
+        response:
+          "Objetivo General:\n" +
+          "Analizar cómo la dependencia tecnológica influye en el rendimiento académico.\n\n" +
+          "Objetivos Específicos:\n" +
+          "1) Medir el grado de dependencia tecnológica.\n" +
+          "2) Identificar los factores que pueden generarla.\n" +
+          "3) Reconocer los dispositivos más utilizados."
+      },
+
+      {
+        keywords: ['hipotesis', 'hipotesi', 'plantea'],
+        response:
+          "La hipótesis sostiene que, a mayor dependencia tecnológica, menor puede ser el rendimiento académico de los estudiantes, debido principalmente a las distracciones y a la pérdida de tiempo destinado al estudio."
+      },
+
+      {
+        keywords: ['metodologia', 'metodo', 'enfoque', 'muestra', 'encuesta', 'cuantos'],
+        response:
+          "La investigación utiliza un enfoque cuantitativo, nivel descriptivo, diseño no experimental y corte transversal.\n\n" +
+          "La muestra estuvo conformada por 175 alumnos del Bachillerato Técnico."
+      },
+
+      {
+        keywords: ['variable', 'variables', 'independiente', 'dependiente'],
+        response:
+          "Variable independiente: Dependencia tecnológica.\n\n" +
+          "Variable dependiente: Rendimiento académico de los estudiantes."
+      },
+
+      {
+        keywords: ['resultado', 'resultados', 'edad', 'sexo', 'demografico', 'porcentaje'],
+        response:
+          "Resultados principales:\n" +
+          "• 55% de los encuestados son mujeres.\n" +
+          "• 45% son varones.\n" +
+          "• 76% tiene entre 16 y 17 años.\n" +
+          "• 95% utiliza el celular como dispositivo principal."
+      },
+
+      {
+        keywords: ['dispositivo', 'celular', 'telefono', 'computadora', 'tablet', 'mas usado'],
+        response:
+          "El 95% de los encuestados (167 alumnos) utiliza el teléfono celular como dispositivo principal.\n\n" +
+          "El 4% utiliza principalmente una computadora y el 1% una tablet."
+      },
+
+      {
+        keywords: ['ley', 'legal', 'constitucion', 'articulo', 'articulos'],
+        response:
+          "Las principales bases legales consideradas son la Constitución Nacional del Paraguay, especialmente los artículos 73, 74 y 75, y la Ley General de Educación N.º 1264/98."
+      }
+    ];
+
+    // ================================
+    // FUNCIONES DEL CHATBOT
+    // ================================
+
+    function normalizeText(text) {
+      return text
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[¿?¡!.,;:()]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function sendMessage() {
+      const input = document.getElementById("userInput");
+      const text = input.value.trim();
+
+      if (text === "") {
+        return;
+      }
+
+      appendMessage(text, "user-message");
+      input.value = "";
+
+      setTimeout(function () {
+        const response = getBotResponse(text);
+        appendMessage(response, "bot-message");
+      }, 300);
+    }
+
+    function appendMessage(text, className) {
+      const chatBox = document.getElementById("chatBox");
+
+      const messageDiv = document.createElement("div");
+      messageDiv.className = "message " + className;
+      messageDiv.textContent = text;
+
+      chatBox.appendChild(messageDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function getBotResponse(userText) {
+      const cleanText = normalizeText(userText);
+      const words = cleanText.split(" ");
+
+      const matchedResponses = [];
+
+      for (const entry of knowledgeBase) {
+        let found = false;
+
+        for (const key of entry.keywords) {
+          const cleanKey = normalizeText(key);
+
+          // Coincidencia por palabra o por frase
+          if (
+            cleanText.includes(cleanKey) ||
+            words.includes(cleanKey)
+          ) {
+            found = true;
+            break;
+          }
+        }
+
+        if (found && !matchedResponses.includes(entry.response)) {
+          matchedResponses.push(entry.response);
+        }
+      }
+
+      if (matchedResponses.length > 0) {
+        // Evita respuestas excesivamente largas cuando se activan muchas categorías.
+        return matchedResponses.slice(0, 2).join("\n\n--------------------\n\n");
+      }
+
+      return (
+        "No encontré una respuesta específica para esa pregunta.\n\n" +
+        "Puedes preguntarme sobre:\n" +
+        "• Dependencia tecnológica\n" +
+        "• Rendimiento académico\n" +
+        "• Objetivos\n" +
+        "• Hipótesis\n" +
+        "• Metodología\n" +
+        "• Variables\n" +
+        "• Resultados\n" +
+        "• Autores\n" +
+        "• Dispositivos utilizados\n" +
+        "• Bases legales"
+      );
+    }
+
+    function askQuestion(question) {
+      const input = document.getElementById("userInput");
+      input.value = question;
+      sendMessage();
+    }
+
+    // Enter = enviar
+    document.getElementById("userInput").addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        sendMessage();
+      }
+    });
+  </script>
+
+</body>
+</html>
